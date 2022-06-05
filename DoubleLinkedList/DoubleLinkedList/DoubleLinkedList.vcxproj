@@ -114,12 +114,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRAPHICS_API_OPENGL_33; PLATFORM_DESKTOP</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\raylib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\raylib\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>raylib.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,10 +143,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CircleCollider.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DoubleLinkedList.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Hit.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="RectangleCollider.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIInputBox.cpp" />
+    <ClCompile Include="UIObject.cpp" />
+    <ClCompile Include="UIPanel.cpp" />
+    <ClCompile Include="UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="DoubleLinkedList.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="Hit.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="SpriteComponent.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UIInputBox.h" />
+    <ClInclude Include="UIObject.h" />
+    <ClInclude Include="UIPanel.h" />
+    <ClInclude Include="UIText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

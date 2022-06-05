@@ -2,12 +2,25 @@
 #include <iostream>
 
 // List element class
-
+// Non-pointer templated
 template<typename T>
 struct ListElement {
 	public:
 		ListElement(T v, ListElement* prev, ListElement* nxt);
+
 		T value;
+		ListElement* next;
+		ListElement* previous;
+};
+
+// Pointer templated
+template<typename T>
+struct ListElement<T*> {
+	public:
+		ListElement(T* v, ListElement* prev, ListElement* nxt);
+		~ListElement();
+
+		T* value;
 		ListElement* next;
 		ListElement* previous;
 };
@@ -18,7 +31,23 @@ inline ListElement<T>::ListElement(T v, ListElement* prev, ListElement* nxt)
 	value = v;
 	previous = prev;
 	next = nxt;
+}
 
+template<typename T>
+inline ListElement<T*>::ListElement(T* v, ListElement* prev, ListElement* nxt)
+{
+	value = v;
+	previous = prev;
+	next = nxt;
+}
+
+template<typename T>
+inline ListElement<T*>::~ListElement()
+{
+	if (value != nullptr) {
+		delete value;
+		value = nullptr;
+	}
 }
 
 // Double linked list class
@@ -31,6 +60,7 @@ public:
 	DoubleLinkedList();
 	~DoubleLinkedList();
 
+
 	void Add(T value, int index);
 	void AddFront(T value);
 	void AddBack(T value);
@@ -39,11 +69,18 @@ public:
 	void RemoveFront();
 	void RemoveBack();
 
+	void SortAsInt();
+
+	DoubleLinkedList<T> Copy();
+
+
+
 	bool IsEmpty() { return size == 0; }
 	int GetSize() { return size; }
 	T GetFirst() { return Front->value;  }
 	T GetLast() { return End->value;  }
 
+	T GetValue(int index);
 
 	void PrintAllValues();
 
@@ -64,8 +101,19 @@ inline DoubleLinkedList<T>::DoubleLinkedList()
 template<typename T>
 inline DoubleLinkedList<T>::~DoubleLinkedList()
 {
-
+	Clear();
 }
+
+
+template<typename T>
+inline DoubleLinkedList<T> DoubleLinkedList<T>::Copy()
+{
+	DoubleLinkedList<T> copy = DoubleLinkedList<T>();
+
+
+	return ;
+}
+
 
 template<typename T>
 inline void DoubleLinkedList<T>::Add(T value, int index)
@@ -91,8 +139,6 @@ inline void DoubleLinkedList<T>::Add(T value, int index)
 	}
 
 	
-
-
 	// Insert new in between 
 	//			[new]
 	//			  V
@@ -205,6 +251,17 @@ inline void DoubleLinkedList<T>::Remove(int index)
 template<typename T>
 inline void DoubleLinkedList<T>::RemoveFront()
 {
+	if (size == 0) {
+		return;
+	}
+	if (size == 1) {
+		delete Front;
+		Front = nullptr;
+		End = nullptr;
+		size--;
+		return;
+	}
+
 	// Set new first element to the second element 
 	Front = Front->next;
 
@@ -219,17 +276,111 @@ inline void DoubleLinkedList<T>::RemoveFront()
 template<typename T>
 inline void DoubleLinkedList<T>::RemoveBack()
 {
+	if (size == 0) {
+		return;
+	}
+	if (size == 1) {
+		delete End;
+		End = nullptr;
+		Front = nullptr;
+		size--;
+		return;
+	}
 	// Set new first element to the second element 
 	End = End->previous;
 
 	// From the second to last element, delete the next (Which was the old last element)
 	delete End->next;
 	End->next = nullptr;
+	
 
 	// Decrease size
 	size--;
 }
 
+template<typename T>
+inline void DoubleLinkedList<T>::SortAsInt()
+{
+	if (size <= 1) {
+		return;
+	}
+
+
+	DoubleLinkedList<T> copy = DoubleLinkedList<T>();
+	ListElement<T>* currentElement = Front;
+	copy.AddFront(Front->value);
+
+	for (int i = 0; i < size-1; i++) {
+		// Keep track of number currently being checked
+		currentElement = currentElement->next;
+
+
+		ListElement<T>* copyCurrentElement = copy.Front;
+		int copySize = copy.GetSize();
+
+		// Loop through each value currently in copy until the value can be placed
+		for (int j = 0; j < copySize; j++) {
+
+			// If next element is nullptr, it is at the end
+			if (copyCurrentElement->next == nullptr) {
+
+				// Is front element
+				if (copyCurrentElement->previous == nullptr) {
+					// Should add infront of number
+					if (currentElement->value <= copyCurrentElement->value) {
+						copy.AddFront(currentElement->value);
+						break;
+					}
+				}
+				
+				// Else add to back
+				copy.AddBack(currentElement->value);
+				break;;
+			}
+
+			// If value is less than the current copy number
+			if (currentElement->value <= copyCurrentElement->value) {
+				copy.Add(currentElement->value, j);
+				break;
+			}
+			// Move onto next element in copy to check
+			copyCurrentElement = copyCurrentElement->next;
+		}
+		copyCurrentElement = nullptr;
+		
+
+	}
+	currentElement = nullptr;
+
+	Clear();
+
+	currentElement = copy.Front;
+	AddBack(currentElement->value);
+	for (int i = 0; i < copy.GetSize()-1; i++) {
+		currentElement = currentElement->next;
+		AddBack(currentElement->value);
+	}
+}
+
+
+
+template<typename T>
+inline T DoubleLinkedList<T>::GetValue(int index)
+{
+
+	// Begin from start element
+	ListElement<T>* found = Front;
+
+	// Loop until element is found
+	for (int i = 0; i < index; i++) {
+		found = found->next;
+	}
+
+	T val = found->value;
+	found = nullptr;
+
+	return val;
+}
 
 template<typename T>
 inline void DoubleLinkedList<T>::PrintAllValues()
@@ -245,11 +396,11 @@ inline void DoubleLinkedList<T>::PrintAllValues()
 template<typename T>
 inline void DoubleLinkedList<T>::Clear()
 {
-	ListElement* current = Front;
-	ListElement* nextElmt = Front;
+	ListElement<T>* current = Front;
+	ListElement<T>* nextElmt = Front;
 	for (int i = 0; i < size; i++) {
 		// Store next element for later
-		nextElmt = current->Next;
+		nextElmt = current->next;
 
 		// Delete current
 		delete current;
