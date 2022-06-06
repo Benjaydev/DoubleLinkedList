@@ -77,8 +77,8 @@ public:
 
 	bool IsEmpty() { return size == 0; }
 	int GetSize() { return size; }
-	T GetFirst() { return Front->value;  }
-	T GetLast() { return End->value;  }
+	T GetFirst() { return Front != nullptr ? Front->value : NULL;  }
+	T GetLast() { return End != nullptr ? End->value : NULL; }
 
 	T GetValue(int index);
 

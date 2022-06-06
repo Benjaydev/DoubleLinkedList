@@ -46,7 +46,7 @@ void Environment::Start()
     UIButton* addAtButton = new UIButton(GetScreenWidth() - 550, GetScreenHeight() - 200, 200, 50, 0x888888FF, 0xFF8888FF, new UIText(0, 0, "Remove at index", 16, 0xFFFFFFFF));
     addAtButton->AssignCallMethod(std::bind(&Environment::RemoveAtListElement, this));
     
-    UIButton* sortButton = new UIButton(200, GetScreenHeight() - 100, 200, 50, 0x888888FF, 0xFF8888FF, new UIText(0, 0, "Sort", 16, 0xFFFFFFFF));
+    UIButton* sortButton = new UIButton(GetScreenWidth() - 100, GetScreenHeight() - 30, 100, 50, 0x888888FF, 0x8888FFFF, new UIText(0, 0, "Sort", 16, 0xFFFFFFFF));
     sortButton->AssignCallMethod(std::bind(&Environment::SortElements, this));
 
     
@@ -86,32 +86,50 @@ void Environment::Draw(float DeltaTime)
 
     ClearBackground(WHITE);
 
-    DrawFPS(0, 0);
+    //DrawFPS(0, 0);
 
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->Draw();
     }
 
+    std::string empty = doubleLinkedList.IsEmpty() ? "True" : "False";
+    std::string size = std::to_string(doubleLinkedList.GetSize());
+
+    DrawText(("Empty? " + empty).c_str(), GetScreenWidth() - 650, GetScreenHeight() - 50, 16, BLACK);
+    DrawText(("Size: " + size).c_str(), GetScreenWidth() - 650, GetScreenHeight() - 30, 16, BLACK);
+
+    std::string first = std::to_string(doubleLinkedList.GetFirst());
+    std::string last = std::to_string(doubleLinkedList.GetLast());
+
+    DrawText(("First: " + first).c_str(), GetScreenWidth() - 400, GetScreenHeight() - 50, 16, BLACK);
+    DrawText(("Last: " + last).c_str(), GetScreenWidth() - 400, GetScreenHeight() - 30, 16, BLACK);
+
+
     // Write the visuals for the double linked list
-    int dist = GetScreenWidth() / 10;
+    float dist = GetScreenWidth() / 10;
     for (int i = 0; i < doubleLinkedList.GetSize(); i++) {
         int x = i % 9;
         int y = i / 9;
 
-        DrawRectangleLines(dist + (dist * x) - 20, dist + (dist * y) - 60, 100,100, indexInput->currentText == std::to_string(i) ? GetColor(0x00FFFFFF) : BLACK);
+        // Draw box for element
+        DrawRectangleLinesEx({ dist + (dist * x) - 25, dist + (dist * y) - 65, 105, 105 }, 5, indexInput->currentText == std::to_string(i) ? GetColor(0x00FF00FF) : BLACK);
  
         if (i == 0) {
+            // If is front element
             DrawText("Front", dist, dist-40, 16, GetColor(0xFF00FFFF));
+
+            // If is also end element
             if (i == doubleLinkedList.GetSize() - 1) {
                 DrawText("End", dist + (dist * x), dist + (dist * y) - 60, 16, GetColor(0xFF00FFFF));
             }
 
         }
+        // If is end element
         else if (i == doubleLinkedList.GetSize() - 1) {
             DrawText("End", dist + (dist * x), dist + (dist * y) - 40, 16, GetColor(0xFF00FFFF));
         }
 
-       
+        // Draw index number and value of element
         DrawText(("Index: " + std::to_string(i)).c_str(), dist + (dist * x), dist + (dist * y) - 20, 16, BLACK);
         DrawText(std::to_string(doubleLinkedList.GetValue(i)).c_str(), dist+(dist*x), dist+ (dist*y), 16, BLACK);
     }
