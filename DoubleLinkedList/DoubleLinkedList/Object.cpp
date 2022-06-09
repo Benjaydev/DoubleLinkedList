@@ -1,6 +1,5 @@
 #pragma once
 #include "raymath.h"
-#include "rlgl.h"
 #include "Environment.h"
 
 

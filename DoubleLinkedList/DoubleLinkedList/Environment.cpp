@@ -23,16 +23,18 @@ void Environment::Start()
     Timer timer = Timer();
     float DeltaTime = 0;
 
+    new UIPanel(GetScreenWidth() - 700, GetScreenHeight() - 275, 700, 275, ColorToInt(BLACK));
+    new UIText(GetScreenWidth() - 700, GetScreenHeight() - 275, "*Due to visualisation limitations, only 38 elements can be displayed.", 16, 0xFFFFFFFF);
     
-    addNumInput = new UIInputBox(GetScreenWidth() - 100, GetScreenHeight() - 100, 100, 50, 0x000000FF, 0xAAFFFFFF, 0x00FFFFFF, new UIText(0, 0, "0", 16, 0xFFFFFFFF), 100, true);
+    addNumInput = new UIInputBox(GetScreenWidth() - 100, GetScreenHeight() - 100, 100, 50, 0x666666FF, 0xAAFFFFFF, 0x00FFFFFF, new UIText(0, 0, "0", 16, 0xFFFFFFFF), 100, true);
     addNumInput->intMax = 99999;
     addNumInput->intMin = 0;
-    new UIText(GetScreenWidth() - 150, GetScreenHeight() - 145, "Value:", 16, 0x000000FF);
+    new UIText(GetScreenWidth() - 150, GetScreenHeight() - 145, "Value:", 16, 0xFFFFFFFF);
 
-    indexInput = new UIInputBox(GetScreenWidth() - 100, GetScreenHeight() - 200, 100, 50, 0x000000FF, 0xAAFFFFFF, 0x00FFFFFF, new UIText(0, 0, "0", 16, 0xFFFFFFFF), 100, true);
+    indexInput = new UIInputBox(GetScreenWidth() - 100, GetScreenHeight() - 200, 100, 50, 0x666666FF, 0xAAFFFFFF, 0x00FFFFFF, new UIText(0, 0, "0", 16, 0xFFFFFFFF), 100, true);
     indexInput->intMax = 0;
     indexInput->intMin = 0;
-    new UIText(GetScreenWidth() - 150, GetScreenHeight() - 245, "Index:", 16, 0x000000FF);
+    new UIText(GetScreenWidth() - 150, GetScreenHeight() - 245, "Index:", 16, 0xFFFFFFFF);
 
     UIButton* addBackButton = new UIButton(GetScreenWidth() - 300, GetScreenHeight() - 100, 200, 50, 0x888888FF, 0x00FF00FF, new UIText(0, 0, "Add to back", 16, 0xFFFFFFFF));
     addBackButton->AssignCallMethod(std::bind(&Environment::AddBackListElement, this)); 
@@ -73,7 +75,6 @@ void Environment::Update(float DeltaTime)
     indexInput->intMax = fmaxf(doubleLinkedList.GetSize()-1, 0);
     indexInput->currentText = std::to_string( (int)fminf( std::stoi(indexInput->currentText), indexInput->intMax) );
 
-
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->Update(DeltaTime);
     }
@@ -107,7 +108,7 @@ void Environment::Draw(float DeltaTime)
 
     // Write the visuals for the double linked list
     float dist = GetScreenWidth() / 10;
-    for (int i = 0; i < doubleLinkedList.GetSize(); i++) {
+    for (int i = 0; i < fminf(39, doubleLinkedList.GetSize()); i++) {
         int x = i % 9;
         int y = i / 9;
 
@@ -127,6 +128,9 @@ void Environment::Draw(float DeltaTime)
         // If is end element
         else if (i == doubleLinkedList.GetSize() - 1) {
             DrawText("End", dist + (dist * x), dist + (dist * y) - 40, 16, GetColor(0xFF00FFFF));
+        }
+        else if (i == 38) {
+            DrawText("...", dist + (dist * x) + 100, dist + (dist * y) + 10, 35, GetColor(0x000000FF));
         }
 
         // Draw index number and value of element
