@@ -335,7 +335,7 @@ inline void DoubleLinkedList<T>::SortAsInt()
 				
 				// Else add to back
 				copy.AddBack(currentElement->value);
-				break;;
+				break;
 			}
 
 			// If value is less than the current copy number
