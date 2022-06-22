@@ -28,6 +28,9 @@ public:
 	UIInputBox* indexInput;
 
 
+	void ResetGameObjects();
+	
+
 	static std::vector<Object*> objects;
 
 	static int lifetimeObjectCount;

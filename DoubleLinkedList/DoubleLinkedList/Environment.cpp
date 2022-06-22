@@ -62,13 +62,30 @@ void Environment::Start()
 
     }
 
-    delete addNumInput;
-    delete indexInput;
-    delete addBackButton;
-    delete removeBackButton;
+    ResetGameObjects();
 
+    CloseWindow();
 
 }
+
+void Environment::ResetGameObjects() {
+
+    std::vector<std::function<void()>> storeDestroy;
+    // Store all objects for deletion
+    for (int i = 0; i < objects.size(); i++) {
+        storeDestroy.push_back(std::bind(&Object::DeleteSelf, objects[i]));
+    }
+    // Destroy all objects
+    for (int del = 0; del < storeDestroy.size(); del++) {
+        storeDestroy[del]();
+    }
+    storeDestroy.clear();
+    storeDestroy.shrink_to_fit();
+    objects.shrink_to_fit();
+}
+
+
+
 
 void Environment::Update(float DeltaTime)
 {
